@@ -1,0 +1,3 @@
+rootProject.name = 'PureSimpleAST'
+
+include ':simpleast-core'
