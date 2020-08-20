@@ -18,11 +18,12 @@ import core.node.Node
  * For terminal subtrees, the root will simply be added to the tree and no additional parsing will
  * take place on the text.
  *
+ * @param F The format context, can be any object that holds what's required for formatting. See [Node.render]
  * @param T The type of node that this contains.
  * @param S The type of state that child nodes will use. This is mainly used to just pass through
  *          the state back to the parser.
  */
-class ParseSpec<T : Node, S> {
+class ParseSpec<F, T : Node<F>, S> {
   val root: T?
   val isTerminal: Boolean
   val state: S
@@ -51,12 +52,12 @@ class ParseSpec<T : Node, S> {
   companion object {
 
     @JvmStatic
-    fun <T : Node, S> createNonterminal(node: T?, state: S, startIndex: Int, endIndex: Int): ParseSpec<T, S> {
+    fun <F, T : Node<F>, S> createNonterminal(node: T?, state: S, startIndex: Int, endIndex: Int): ParseSpec<F, T, S> {
       return ParseSpec(node, state, startIndex, endIndex)
     }
 
     @JvmStatic
-    fun <T : Node, S> createTerminal(node: T?, state: S): ParseSpec<T, S> {
+    fun <F, T : Node<F>, S> createTerminal(node: T?, state: S): ParseSpec<F, T, S> {
       return ParseSpec(node, state)
     }
   }

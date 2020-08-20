@@ -10,7 +10,8 @@ import core.node.TextNode
 import core.parser.ParseSpec
 import core.parser.Parser
 import core.parser.Rule
-import eu.uniga.core.styles.TextStyle
+import net.minecraft.text.Style
+import net.minecraft.util.Formatting
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -40,43 +41,43 @@ object SimpleMarkdownRules {
           ")\\*(?!\\*)"
   )
 
-  fun <S> createBoldRule(): Rule<Node, S> =
-      createSimpleStyleRule(PATTERN_BOLD) { listOf(TextStyle.Bold) }
+  fun <F, S> createBoldRule(): Rule<F, Node<F>, S> =
+      createSimpleStyleRule(PATTERN_BOLD, { Style.EMPTY.withBold(true) })
 
-  fun <S> createUnderlineRule(): Rule<Node, S> =
-      createSimpleStyleRule(PATTERN_UNDERLINE) { listOf(TextStyle.Underlined) }
+  fun <F, S> createUnderlineRule(): Rule<F, Node<F>, S> =
+      createSimpleStyleRule(PATTERN_UNDERLINE, { Style.EMPTY.withFormatting(Formatting.UNDERLINE) })
 
-  fun <S> createStrikethruRule(): Rule<Node, S> =
-      createSimpleStyleRule(PATTERN_STRIKETHRU) { listOf(TextStyle.StrikeThrough) }
+  fun <F, S> createStrikethruRule(): Rule<F, Node<F>, S> =
+      createSimpleStyleRule(PATTERN_STRIKETHRU, { Style.EMPTY.withFormatting(Formatting.STRIKETHROUGH) })
 
-  fun <S> createTextRule(): Rule<Node, S> {
-    return object : Rule<Node, S>(PATTERN_TEXT) {
-      override fun parse(matcher: Matcher, parser: Parser<in Node, S>, state: S): ParseSpec<Node, S> {
-        val node = TextNode(matcher.group())
+  fun <F, S> createTextRule(): Rule<F, Node<F>, S> {
+    return object : Rule<F, Node<F>, S>(PATTERN_TEXT) {
+      override fun parse(matcher: Matcher, parser: Parser<F, in Node<F>, S>, state: S): ParseSpec<F, Node<F>, S> {
+        val node = TextNode<F>(matcher.group())
         return ParseSpec.createTerminal(node, state)
       }
     }
   }
-  fun <S> createNewlineRule(): Rule<Node, S> {
-    return object : Rule.BlockRule<Node, S>(PATTERN_NEWLINE) {
-      override fun parse(matcher: Matcher, parser: Parser<in Node, S>, state: S): ParseSpec<Node, S> {
-        val node = TextNode("\n")
+  fun <F, S> createNewlineRule(): Rule<F, Node<F>, S> {
+    return object : Rule.BlockRule<F, Node<F>, S>(PATTERN_NEWLINE) {
+      override fun parse(matcher: Matcher, parser: Parser<F, in Node<F>, S>, state: S): ParseSpec<F, Node<F>, S> {
+        val node = TextNode<F>("\n")
         return ParseSpec.createTerminal(node, state)
       }
     }
   }
 
-  fun <S> createEscapeRule(): Rule<Node, S> {
-    return object : Rule<Node, S>(PATTERN_ESCAPE) {
-      override fun parse(matcher: Matcher, parser: Parser<in Node, S>, state: S): ParseSpec<Node, S> {
+  fun <F, S> createEscapeRule(): Rule<F, Node<F>, S> {
+    return object : Rule<F, Node<F>, S>(PATTERN_ESCAPE) {
+      override fun parse(matcher: Matcher, parser: Parser<F, in Node<F>, S>, state: S): ParseSpec<F, Node<F>, S> {
         return ParseSpec.createTerminal(TextNode(matcher.group(1)), state)
       }
     }
   }
 
-  fun <S> createItalicsRule(): Rule<Node, S> {
-    return object : Rule<Node, S>(PATTERN_ITALICS) {
-      override fun parse(matcher: Matcher, parser: Parser<in Node, S>, state: S): ParseSpec<Node, S> {
+  fun <F, S> createItalicsRule(): Rule<F, Node<F>, S> {
+    return object : Rule<F, Node<F>, S>(PATTERN_ITALICS) {
+      override fun parse(matcher: Matcher, parser: Parser<F, in Node<F>, S>, state: S): ParseSpec<F, Node<F>, S> {
         val startIndex: Int
         val endIndex: Int
         val asteriskMatch = matcher.group(2)
@@ -88,18 +89,17 @@ object SimpleMarkdownRules {
           endIndex = matcher.end(1)
         }
 
-        val styles = ArrayList<TextStyle>(1)
-        styles.add(TextStyle.Italic)
+        val style = Style.EMPTY.withItalic(true)
 
-        val node = StyleNode<TextStyle>(styles)
+        val node = StyleNode<F, Style>(style)
         return ParseSpec.createNonterminal(node, state, startIndex, endIndex)
       }
     }
   }
 
   @JvmOverloads @JvmStatic
-  fun <S> createSimpleMarkdownRules(includeTextRule: Boolean = true): MutableList<Rule<Node, S>> {
-    val rules = ArrayList<Rule<Node, S>>()
+  fun <F, S> createSimpleMarkdownRules(includeTextRule: Boolean = true): MutableList<Rule<F, Node<F>, S>> {
+    val rules = ArrayList<Rule<F, Node<F>, S>>()
     rules.add(createEscapeRule())
     rules.add(createNewlineRule())
     rules.add(createBoldRule())
@@ -113,10 +113,11 @@ object SimpleMarkdownRules {
   }
 
   @JvmStatic
-  fun <S> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<TextStyle>) =
-      object : Rule<Node, S>(pattern) {
-        override fun parse(matcher: Matcher, parser: Parser<in Node, S>, state: S): ParseSpec<Node, S> {
-          val node = StyleNode<TextStyle>(styleFactory())
+  fun <F, S> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> Style) =
+      object : Rule<F, Node<F>, S>(pattern) {
+        override fun parse(matcher: Matcher, parser: Parser<F, in Node<F>, S>, state: S): ParseSpec<F, Node<F>, S> {
+          val style = styleFactory()
+          val node = StyleNode<F, Style>(style)
           return ParseSpec.createNonterminal(node, state, matcher.start(1), matcher.end(1))
         }
       }
