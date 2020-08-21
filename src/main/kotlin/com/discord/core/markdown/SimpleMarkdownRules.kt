@@ -2,14 +2,14 @@
  * Edited 2020 UniGa
  */
 
-package core.markdown
+package com.discord.core.markdown
 
-import core.node.Node
-import core.node.StyleNode
-import core.node.TextNode
-import core.parser.ParseSpec
-import core.parser.Parser
-import core.parser.Rule
+import com.discord.core.node.Node
+import com.discord.core.node.StyleNode
+import com.discord.core.node.TextNode
+import com.discord.core.parser.ParseSpec
+import com.discord.core.parser.Parser
+import com.discord.core.parser.Rule
 import net.minecraft.text.Style
 import net.minecraft.util.Formatting
 import java.util.*

@@ -2,7 +2,7 @@
  * Edited 2020 UniGa
  */
 
-package core.node
+package com.discord.core.node
 
 import net.minecraft.text.LiteralText
 

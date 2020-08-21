@@ -2,9 +2,9 @@
  * Edited 2020 UniGa
  */
 
-package core.parser
+package com.discord.core.parser
 
-import core.node.Node
+import com.discord.core.node.Node
 import java.util.*
 
 

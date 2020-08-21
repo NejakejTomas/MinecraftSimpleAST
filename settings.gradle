@@ -11,4 +11,4 @@ pluginManagement {
 
 rootProject.name = 'MinecraftTextCompatibleSimpleAST'
 
-include ':simpleast-core'
+include ':simpleast-com.discord.core'
