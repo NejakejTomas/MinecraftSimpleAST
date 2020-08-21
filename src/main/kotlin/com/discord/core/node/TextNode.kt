@@ -10,7 +10,7 @@ import net.minecraft.text.LiteralText
  * Node representing simple text.
  * @param F The format context, can be any object that holds what's required for formatting. See [format].
  */
-open class TextNode<F> (val content: String) : Node<F>() {
+open class TextNode<F> (protected val content: String) : Node<F>() {
 
   override fun toString() = "${javaClass.simpleName}[${getChildren()?.size}]: $content"
 
