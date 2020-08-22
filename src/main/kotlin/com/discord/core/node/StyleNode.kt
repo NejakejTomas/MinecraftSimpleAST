@@ -19,7 +19,11 @@ open class StyleNode<F, T>(protected val style: Style) : Node<F>() {
       }
 
     override fun format(renderContext: F): LiteralText {
-        val text = LiteralText("")
+        return formatWithText(renderContext, "")
+    }
+
+    protected fun formatWithText(renderContext: F, content: String): LiteralText {
+        val text = LiteralText(content)
         text.style = style
 
         getChildren()?.forEach {
