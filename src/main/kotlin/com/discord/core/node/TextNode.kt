@@ -14,11 +14,11 @@ open class TextNode<F> (protected val content: String) : Node<F>() {
 
   override fun toString() = "${javaClass.simpleName}[${getChildren()?.size}]: $content"
 
-  override fun format(renderContext: F): LiteralText {
+  override fun format(formattingContext: F): LiteralText {
     val text = LiteralText(content)
 
     getChildren()?.forEach {
-      text.append(it.format(renderContext))
+      text.append(it.format(formattingContext))
     }
 
     return text

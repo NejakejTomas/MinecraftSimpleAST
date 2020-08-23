@@ -14,12 +14,12 @@ open class StyledTextNode<F, T>(protected var style : Style?, protected var text
                 it.toString()
             }
 
-    override fun format(renderContext: F): LiteralText {
+    override fun format(formattingContext: F): LiteralText {
         val text = LiteralText(text ?: "")
         if (style != null) text.style = style
 
         getChildren()?.forEach {
-            text.append(it.format(renderContext))
+            text.append(it.format(formattingContext))
         }
 
         return text

@@ -18,12 +18,12 @@ open class StyleNode<F, T>(protected val style: Style) : Node<F>() {
         it.toString()
       }
 
-    override fun format(renderContext: F): LiteralText {
+    override fun format(formattingContext: F): LiteralText {
         val text = LiteralText("")
         text.style = style
 
         getChildren()?.forEach {
-            text.append(it.format(renderContext))
+            text.append(it.format(formattingContext))
         }
 
         return text

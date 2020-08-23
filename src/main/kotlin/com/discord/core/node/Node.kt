@@ -24,5 +24,5 @@ abstract class Node<F> {
     }
   }
 
-  abstract fun format(renderContext: F): LiteralText
+  abstract fun format(formattingContext: F): LiteralText
 }
